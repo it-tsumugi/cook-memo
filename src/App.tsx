@@ -32,6 +32,7 @@ function App() {
         }
       } catch (err) {
         console.error('認証チェックエラー:', err)
+        setError('認証サービスに接続できません。環境変数を確認してください。')
       } finally {
         setLoading(false)
       }
@@ -40,7 +41,7 @@ function App() {
     checkAuth()
 
     // 認証状態の変更をリスニング
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
         await loadRecipes()
