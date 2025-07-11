@@ -36,11 +36,18 @@ Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhy
 - [ ] Repository Secretsが正しく設定されているか確認
 - [ ] GitHub ActionsのBuildステップでエラーが発生していないか確認
 - [ ] ブラウザの開発者ツールでJavaScriptエラーをチェック
+- [ ] コンソールログでSupabase環境変数の状態を確認
 
 ### よくあるエラー
 1. **Environment variables not found**: Repository Secretsが未設定
 2. **Supabase connection error**: 無効なURL/APIキー
 3. **404 Error**: GitHub Pages設定が不完全
+4. **White screen**: ベースパス設定やJavaScriptエラー
+
+### デバッグ方法
+1. **コンソールログ確認**: F12でデベロッパーツールを開く
+2. **環境変数確認**: 「Missing Supabase environment variables」エラーをチェック
+3. **ネットワークエラー**: Supabaseへの接続状況を確認
 
 ## 5. 確認用テストページ
 
