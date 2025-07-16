@@ -22,9 +22,15 @@ export const recipeService = {
   },
 
   async createRecipe(recipe: RecipeInput): Promise<Recipe> {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      throw new Error('ユーザーが認証されていません')
+    }
+
     const { data, error } = await supabase
       .from('recipes')
-      .insert([recipe])
+      .insert([{ ...recipe, user_id: user.id }])
       .select()
       .single()
 

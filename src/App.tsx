@@ -4,12 +4,15 @@ import { recipeService } from './services/recipeService'
 import { RecipeForm } from './components/RecipeForm'
 import { RecipeList } from './components/RecipeList'
 import { Modal } from './components/Modal'
+import { Auth } from './components/Auth'
+import { supabase } from './lib/supabase'
 import './App.css'
 
 function App() {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -18,7 +21,36 @@ function App() {
   })
 
   useEffect(() => {
-    loadRecipes()
+    // 認証状態の確認
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+        if (user) {
+          await loadRecipes()
+        }
+      } catch (error) {
+        console.error('認証確認エラー:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuth()
+
+    // 認証状態の変更を監視
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        loadRecipes()
+      } else {
+        setRecipes([])
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
@@ -46,13 +78,10 @@ function App() {
 
   const loadRecipes = async () => {
     try {
-      setLoading(true)
       const data = await recipeService.getRecipes()
       setRecipes(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -88,8 +117,21 @@ function App() {
   }
 
 
+  const handleAuthSuccess = () => {
+    loadRecipes()
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setRecipes([])
+  }
+
   if (loading) {
     return <div className="loading">読み込み中...</div>
+  }
+
+  if (!user) {
+    return <Auth onAuthSuccess={handleAuthSuccess} />
   }
 
 
@@ -97,9 +139,15 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>CookMemo</h1>
-        <button onClick={toggleDarkMode} className="dark-mode-toggle">
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
+        <div className="header-actions">
+          <span>ようこそ、{user.email}さん</span>
+          <button onClick={toggleDarkMode} className="dark-mode-toggle">
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
+          <button onClick={handleSignOut} className="sign-out-btn">
+            ログアウト
+          </button>
+        </div>
       </header>
       
       {error && (

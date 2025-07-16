@@ -23,6 +23,23 @@
   gap: 1rem;
 }
 
+.sign-out-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sign-out-btn:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
 .app-header h1 {
   color: #2c3e50;
   margin: 0;
@@ -852,6 +869,30 @@ html, body {
 .auth-switch-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.auth-note {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f0f8ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.auth-note p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #0066cc;
+}
+
+.dark-mode .auth-note {
+  background: #1a2332;
+  border-color: #2d3748;
+}
+
+.dark-mode .auth-note p {
+  color: #60a5fa;
 }
 
 /* ユーザー情報表示 */
