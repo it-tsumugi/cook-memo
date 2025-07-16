@@ -100,4 +100,13 @@ npm run db:push
 
 ## デプロイ
 
-このプロジェクトはGitHub Pagesで自動デプロイされます。mainブランチにプッシュするとGitHub Actionsが自動的にビルドしてデプロイします。
+このプロジェクトはVercelでデプロイされます。
+
+### Vercelデプロイ手順
+1. [Vercel](https://vercel.com) にアクセス
+2. GitHubリポジトリを連携
+3. 環境変数を設定（詳細は `VERCEL_DEPLOY_GUIDE.md` を参照）
+4. デプロイ実行
+
+### 自動デプロイ
+mainブランチにプッシュすると自動的にVercelでビルド・デプロイされます。

@@ -1,6 +1,5 @@
 {
   "name": "cook-memo-app",
-  "homepage": "https://it-tsumugi.github.io/cook-memo/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,7 +7,6 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "deploy": "npm run build",
     "preview": "vite preview",
     "migrate": "./scripts/migrate.sh",
     "db:push": "supabase db push",
