@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import type { Recipe, RecipeInput } from './types/recipe'
-import type { User } from '@supabase/supabase-js'
+// import type { User } from '@supabase/supabase-js'
 import { recipeService } from './services/recipeService'
-import { supabase } from './lib/supabase'
+// import { supabase } from './lib/supabase'
 import { RecipeForm } from './components/RecipeForm'
 import { RecipeList } from './components/RecipeList'
 import { Modal } from './components/Modal'
-import { Auth } from './components/Auth'
+// import { Auth } from './components/Auth'
 import './App.css'
 
 function App() {
-  const [user, setUser] = useState<User | null>(null)
+  // const [user, setUser] = useState<User | null>(null)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [loading, setLoading] = useState(true)
@@ -22,35 +22,24 @@ function App() {
   })
 
   useEffect(() => {
-    // 認証状態チェック
-    const checkAuth = async () => {
+    // 認証機能を一時的にオフにして、直接レシピを読み込み
+    const loadData = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-        if (user) {
-          await loadRecipes()
-        }
+        console.log('=== CookMemo Debug ===')
+        console.log('Environment:', import.meta.env.MODE)
+        console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL)
+        console.log('Supabase Key defined:', !!import.meta.env.VITE_SUPABASE_ANON_KEY)
+        
+        await loadRecipes()
       } catch (err) {
-        console.error('認証チェックエラー:', err)
-        setError('認証サービスに接続できません。環境変数を確認してください。')
+        console.error('データ読み込みエラー:', err)
+        setError('Supabaseとの接続に失敗しました。環境変数を確認してください。')
       } finally {
         setLoading(false)
       }
     }
 
-    checkAuth()
-
-    // 認証状態の変更をリスニング
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        await loadRecipes()
-      } else {
-        setRecipes([])
-      }
-    })
-
-    return () => subscription.unsubscribe()
+    loadData()
   }, [])
 
   useEffect(() => {
@@ -101,20 +90,20 @@ function App() {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut()
-      setUser(null)
-      setRecipes([])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'ログアウトに失敗しました')
-    }
-  }
+  // const handleLogout = async () => {
+  //   try {
+  //     await supabase.auth.signOut()
+  //     setUser(null)
+  //     setRecipes([])
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : 'ログアウトに失敗しました')
+  //   }
+  // }
 
-  const handleAuthSuccess = () => {
-    setLoading(true)
-    loadRecipes().finally(() => setLoading(false))
-  }
+  // const handleAuthSuccess = () => {
+  //   setLoading(true)
+  //   loadRecipes().finally(() => setLoading(false))
+  // }
 
   const handleEdit = (recipe: Recipe) => {
     setEditingRecipe(recipe)
@@ -135,9 +124,10 @@ function App() {
     return <div className="loading">読み込み中...</div>
   }
 
-  if (!user) {
-    return <Auth onAuthSuccess={handleAuthSuccess} />
-  }
+  // 認証機能を一時的にオフ
+  // if (!user) {
+  //   return <Auth onAuthSuccess={handleAuthSuccess} />
+  // }
 
   return (
     <div className="app">
@@ -145,10 +135,10 @@ function App() {
         <h1>CookMemo</h1>
         <div className="header-actions">
           <div className="user-info">
-            <span className="user-email">{user.email}</span>
-            <button onClick={handleLogout} className="logout-btn">
+            <span className="user-email">Debug Mode (認証オフ)</span>
+            {/* <button onClick={handleLogout} className="logout-btn">
               ログアウト
-            </button>
+            </button> */}
           </div>
           <button onClick={toggleDarkMode} className="dark-mode-toggle">
             {isDarkMode ? '☀️' : '🌙'}
